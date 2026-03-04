@@ -13,11 +13,11 @@ public class PlayerController : MonoBehaviour
     private float movementY;
     
     [SerializeField] private float speed = 0;
+    [SerializeField] private float jumpForce = 0;
     public TextMeshProUGUI countText;
     public GameObject winTextObject;
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private AudioClip deathSound;
-    [SerializeField] private AudioSource backgroundMusic;
     private AudioSource sfxSource;
     private AudioSource myAudioSource;
 
@@ -47,6 +47,14 @@ public class PlayerController : MonoBehaviour
         movementY = movementVector.y;
     }
 
+    // Jump when space is pressed
+    void OnJump(InputValue jumpValue)
+    {
+        if (jumpValue.isPressed)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+    }
     void SetCountText()
     {
         countText.text = "Point: " + count.ToString();
@@ -88,15 +96,8 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // Destroy the current object
+            // Destroy the current object and play death sound
             AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 1f);
-
-            // Stop background music when player dies
-            if (backgroundMusic != null)
-            {
-                backgroundMusic.Stop();
-            }
-
             Destroy(gameObject); 
             
             // Update the winText to display "You Lose!"
