@@ -6,12 +6,23 @@ using UnityEngine.AI;
 // Enemy AI will patroling an area, if player is near, attack
 public class EnemyAI : MonoBehaviour
 {
+    [Header("References")]
     public NavMeshAgent agent;
     public Transform player;
+
+     [Header("Layers")]
     public LayerMask indicateGround, indicatePlayer;
-    public GameObject projectile;
+
+    [Tooltip("Where the projectile spawns from (child transform). If null, uses enemy position + up.")]
+    public Transform shootPoint;
+
+    [Tooltip("Projectile prefab that has a Projectile.cs script on it.")]
+    public GameObject projectilePrefab;
+
+    [Header("Stats")]
     public float health;
-    //States of enemy
+
+    [Header("Ranges")]
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
     // Patroling
@@ -20,13 +31,14 @@ public class EnemyAI : MonoBehaviour
     public float patrolPointRange;
 
     // Attack
-    public float timeBetweenAttack;
+    public float timeBetweenAttack = 1.25f;
     bool alreadyAttacked;
 
     private void Awake()
     {
         // Enemy will find Player tag
-        player = GameObject.Find("Player").transform;
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+        if (p != null) player = p.transform;
         agent = GetComponent<NavMeshAgent>();
     }
 
@@ -90,20 +102,40 @@ public class EnemyAI : MonoBehaviour
     {
         //Enemy will stop to attack
         agent.SetDestination(transform.position);
-        transform.LookAt(player);
 
+        // Face the player directly
+        Vector3 lookDir = player.position - transform.position;
+        lookDir.y = 0f;
+        if (lookDir.sqrMagnitude > 0.001f)
+            transform.rotation = Quaternion.LookRotation(lookDir);
+
+        if (alreadyAttacked) return;
+
+        // Spawn position
+        Vector3 spawnPos = (shootPoint != null) ? shootPoint.position : (transform.position + Vector3.up * 1f);
+
+        // Aim direction toward player
+        Vector3 dir = (player.position - spawnPos).normalized;
+
+        // Instantiate projectile
+        GameObject go = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(dir));
+
+        Projectile proj = go.GetComponent<Projectile>();
         // If already done an attack, reset the attack
-        if (!alreadyAttacked)
+        if (proj != null)
         {
-            // Attack with projectile
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 30f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 5f, ForceMode.Impulse);
-
-            //Reset attack
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttack);
+            proj.Fire(dir, transform);                  // owner = this enemy
         }
+        else
+        {
+            // Fallback if you haven't added Projectile.cs yet:
+            Rigidbody rb = go.GetComponent<Rigidbody>();
+            if (rb != null)
+                rb.velocity = dir * 14f;
+        }
+
+        alreadyAttacked = true;
+        Invoke(nameof(ResetAttack), timeBetweenAttack);
     }
 
     // Reset Attack
