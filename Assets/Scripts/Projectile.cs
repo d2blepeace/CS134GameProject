@@ -6,16 +6,23 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Projectile : MonoBehavior 
+public class Projectile : MonoBehaviour 
 {
     [Header("Projectile Setting")]
-    [SerializeField] private float speed;
-    [SerializeField] private float lifetime;
-    [SerializeField] private float damage;
+    [SerializeField] private float speed = 14f;
+    [SerializeField] private float lifetime = 5f;
+    [SerializeField] private float damage = 1f;
 
     private Rigidbody rb;
-    // Onwer of projectile in case player can shoot projectile too
-    public Transform Owneer {get; private set;}
+    
+    // Stored who fired this projectile
+    private Transform shooter;
+    // Stored the Owner of projectile to points at enemy after being parried
+    public Transform Owner
+    {
+        get;
+        private set;
+    }
 
     //Check if projectile has been parried and reflected yet
     private bool reflected = false;
@@ -31,24 +38,24 @@ public class Projectile : MonoBehavior
         Destroy(gameObject, lifetime);
     }
 
-    //Call when enemies shoot projectile
+    //Call when EnemyAI shoot projectile
     public void Fire(Vector3 direction, Transform owner)
     {
         Owner = owner;
+        shooter = owner;        
         reflected = false;
         rb.velocity = direction.normalized * speed;
     }
 
     private void OnCollisionEnter(Collision collision) 
     {
-        // Prevent projectile hitting its owner
-        if (collision.transform == Owner) return;
+        // Let the projectile collide freely to enemy after being parried
+        if (collision.transform == shooter && !reflected) return;
 
-        // If projectile hits enemy after being reflected
+        // Reflected the projectile back to enemy and do damage
         EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
-
         if (enemy != null && reflected) {
-            enemy.TakeDamage(damage);
+            enemy.TakeDamage((int) damage);
             Destroy(gameObject);
             return;
         }
@@ -56,11 +63,45 @@ public class Projectile : MonoBehavior
         //If it hits player before parried successfully
         if(collision.gameObject.CompareTag("Player") && !reflected)
         {
-            //Script for player being damage (need work after working on health system)
+            //call player health script here
             Destroy(gameObject);
             return;
         }
         // Destroy on hitting other object: walls, dynamic object
         Destroy(gameObject);
     }
+
+    // Parry zone is a trigger collider child on player, enabled by PlayerParry
+    private void OnTriggerEnter(Collider other)
+    {
+        // Look for PlayerParry on collider on its parent
+        PlayerParry  parry = other.GetComponentInParent<PlayerParry>();
+        if (parry == null) return;
+
+        // Only reflect projectile back if parry window is currently active
+        if (parry.IsParryActive)
+        {
+            Reflect(other.transform);
+        }
+    }
+
+    // called when parry zone trigger detects this projectile 
+    public void Reflect(Transform relfectSource)
+    {
+        reflected = true;
+
+         if (Owner != null )
+        {
+            //aim directly at enemy's current global position
+            Vector3 aimDir = (Owner.position - transform.position).normalized;
+            rb.velocity = aimDir * speed;
+        }
+        else
+        {
+            // simply reflect backward in case this one is buggy
+            rb.velocity = -rb.velocity.normalized * speed;
+        }
+    }
+
+
 }
