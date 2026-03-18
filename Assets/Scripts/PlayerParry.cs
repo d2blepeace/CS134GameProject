@@ -10,7 +10,6 @@ using UnityEngine.InputSystem;
  -> projectile got reflected back
 */
 
-
 public class PlayerParry : MonoBehaviour
 {
     [SerializeField] private float parryWindow = 0.2f;      //How long parry window stay active

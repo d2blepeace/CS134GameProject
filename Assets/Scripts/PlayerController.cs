@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     private AudioSource sfxSource;
     private AudioSource myAudioSource;
 
+    // Health system
+    private PlayerHealth playerHealth;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +31,10 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         count = 0;
 
+        // Find playerHealth
+        playerHealth = GetComponent<PlayerHealth>();
+    
+        //Count text
         SetCountText();
 
         // Activate win text
@@ -55,6 +62,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
+    
     void SetCountText()
     {
         countText.text = "Point: " + count.ToString();

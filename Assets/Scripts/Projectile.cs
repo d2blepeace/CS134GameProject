@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
 
     private Rigidbody rb;
     
-    // Stored who fired this projectile
+    // Stored who fired this projectile to skip self-collision on launch
     private Transform shooter;
     // Stored the Owner of projectile to points at enemy after being parried
     public Transform Owner
@@ -42,47 +42,9 @@ public class Projectile : MonoBehaviour
     public void Fire(Vector3 direction, Transform owner)
     {
         Owner = owner;
-        shooter = owner;        
+        shooter = owner;        //lock in original shooter    
         reflected = false;
         rb.velocity = direction.normalized * speed;
-    }
-
-    private void OnCollisionEnter(Collision collision) 
-    {
-        // Let the projectile collide freely to enemy after being parried
-        if (collision.transform == shooter && !reflected) return;
-
-        // Reflected the projectile back to enemy and do damage
-        EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
-        if (enemy != null && reflected) {
-            enemy.TakeDamage((int) damage);
-            Destroy(gameObject);
-            return;
-        }
-
-        //If it hits player before parried successfully
-        if(collision.gameObject.CompareTag("Player") && !reflected)
-        {
-            //call player health script here
-            Destroy(gameObject);
-            return;
-        }
-        // Destroy on hitting other object: walls, dynamic object
-        Destroy(gameObject);
-    }
-
-    // Parry zone is a trigger collider child on player, enabled by PlayerParry
-    private void OnTriggerEnter(Collider other)
-    {
-        // Look for PlayerParry on collider on its parent
-        PlayerParry  parry = other.GetComponentInParent<PlayerParry>();
-        if (parry == null) return;
-
-        // Only reflect projectile back if parry window is currently active
-        if (parry.IsParryActive)
-        {
-            Reflect(other.transform);
-        }
     }
 
     // called when parry zone trigger detects this projectile 
@@ -103,5 +65,42 @@ public class Projectile : MonoBehaviour
         }
     }
 
+    // Parry zone is a trigger collider child on player, enabled by PlayerParry
+    private void OnTriggerEnter(Collider other)
+    {
+        // Look for PlayerParry on collider on its parent
+        PlayerParry  parry = other.GetComponentInParent<PlayerParry>();
+        if (parry == null) return;
 
+        // Only reflect projectile back if parry window is currently active
+        if (parry.IsParryActive)
+        {
+            Reflect(other.transform);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision) 
+    {
+        // Let the projectile collide freely to enemy after being parried
+        if (collision.transform == shooter && !reflected) return;
+
+        // Reflected the projectile back to enemy and do damage
+        EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
+        if (enemy != null && reflected) {
+            enemy.TakeDamage((int) damage);
+            Destroy(gameObject);
+            return;
+        }
+
+        //If it hits player before parried successfully
+        if(collision.gameObject.CompareTag("Player") && !reflected)
+        {
+            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null) playerHealth.TakeDamage(1);
+            Destroy(gameObject);
+            return;
+        }
+        // Destroy on hitting other object: walls, dynamic object
+        Destroy(gameObject);
+    }
 }
