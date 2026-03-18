@@ -16,6 +16,9 @@ public class PlayerParry : MonoBehaviour
     [SerializeField] private float parryCooldown = 0.25f;   //Time between parry to avoid spamming
     [SerializeField] private Collider parryTrigger;   //Sphere trigger around player
 
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+
     private bool parryActive;
     private bool onCooldown;
     void Awake()
@@ -38,10 +41,16 @@ public class PlayerParry : MonoBehaviour
     {
         // Set everything active immediately
         onCooldown = true;
+
+        // play parry animation
+        if (animator != null) animator.SetTrigger("Parry");
+
         parryActive = true;
 
         // Enable parry detection and wait for parry window
         if (parryTrigger != null) {parryTrigger.enabled = true;}
+
+        // wait for parry window for a short time
         yield return new WaitForSeconds(parryWindow);
         // end parry window 
         parryActive = false;
