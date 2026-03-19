@@ -18,6 +18,8 @@ public class PlayerParry : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
+    [SerializeField] private AudioClip parryActiveSfx;
+    [SerializeField] private AudioSource audioSource;
 
     private bool parryActive;
     private bool onCooldown;
@@ -44,6 +46,9 @@ public class PlayerParry : MonoBehaviour
 
         // play parry animation
         if (animator != null) animator.SetTrigger("Parry");
+
+        // Play parrysfx
+        if (audioSource != null && parryActiveSfx != null) audioSource.PlayOneShot(parryActiveSfx); 
 
         parryActive = true;
 
