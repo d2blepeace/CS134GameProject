@@ -10,7 +10,7 @@ public class EnemyAI : MonoBehaviour
     public NavMeshAgent agent;
     public Transform player;
 
-     [Header("Layers")]
+    [Header("Layers")]
     public LayerMask indicateGround, indicatePlayer;
 
     [Tooltip("Where the projectile spawns from (child transform). If null, uses enemy position + up.")]
@@ -20,9 +20,10 @@ public class EnemyAI : MonoBehaviour
     public GameObject projectilePrefab;
 
     [Header("Stats")]
-    public float health;
+    [SerializeField] private float maxHealth = 0;
+    private float currHealth;
 
-    [Header("Ranges")]
+    //Ranges
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
     // Patroling
@@ -34,12 +35,22 @@ public class EnemyAI : MonoBehaviour
     public float timeBetweenAttack = 1.25f;
     bool alreadyAttacked;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip shootingSfx;
+    [SerializeField] private AudioSource shootingAudioSource;
+    [SerializeField] private AudioClip alertSfx;
+    [SerializeField] private AudioSource alertAudioSource;
+
+    // Check if player is insight
+    private bool wasPlayerInSight = false;      
+
     private void Awake()
     {
         // Enemy will find Player tag
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p != null) player = p.transform;
         agent = GetComponent<NavMeshAgent>();
+        currHealth = maxHealth;
     }
 
     private void Update()
@@ -47,6 +58,15 @@ public class EnemyAI : MonoBehaviour
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, indicatePlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, indicatePlayer);
+
+        // Play alert sound only once player enters range of sight
+        if (playerInSightRange && !wasPlayerInSight)
+        {
+            alertAudioSource.PlayOneShot(alertSfx);
+        }
+
+        // Save current state for next frame
+        wasPlayerInSight = playerInSightRange;
 
         // At default: player is not in sight AND attack range, do Patroling()
         if (!playerInSightRange && !playerInAttackRange) Patroling();
@@ -117,6 +137,9 @@ public class EnemyAI : MonoBehaviour
         // Aim direction toward player
         Vector3 dir = (player.position - spawnPos).normalized;
 
+        // Play firing sound
+        shootingAudioSource.PlayOneShot(shootingSfx);
+
         // Instantiate projectile
         GameObject go = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(dir));
 
@@ -147,12 +170,13 @@ public class EnemyAI : MonoBehaviour
     //Take damage 
     public void TakeDamage(int damage)
     {
-        health -= damage;
+        currHealth -= damage;
+        currHealth = Mathf.Clamp(currHealth, 0f, maxHealth);
 
-        if (health <= 0)
+        if (currHealth <= 0 )
         {
             Invoke(nameof(DestroyEnemy), 0.5f);
-        }
+        }        
     }
     private void DestroyEnemy()
     {
