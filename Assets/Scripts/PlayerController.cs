@@ -7,15 +7,24 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Rigidbody rb;
+    private CameraController cameraController;
+    private Vector2 lookInput;
     private int count;
     private float movementX;
     private float movementY;
+
+    [Header("Movement")]
+    [SerializeField] private Rigidbody rb;
     
     [SerializeField] private float speed = 0;
     [SerializeField] private float jumpForce = 0;
+    [SerializeField] private float turnSpeed = 12f;
+    [SerializeField] private Transform cameraTransform;
+    
+    [Header("UI")]
     public TextMeshProUGUI countText;
     public GameObject winTextObject;
+    [Header("Sound")]
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private AudioClip deathSound;
     private AudioSource sfxSource;
@@ -30,6 +39,13 @@ public class PlayerController : MonoBehaviour
         // Only find rigidBody if focus on Player Object
         rb = GetComponent<Rigidbody>();
         count = 0;
+
+        // Camera control
+        if (cameraTransform == null && Camera.main != null)
+        {
+            cameraTransform = Camera.main.transform;
+        }
+        cameraController = Camera.main.GetComponent<CameraController>();
 
         // Find playerHealth
         playerHealth = GetComponent<PlayerHealth>();
@@ -62,7 +78,11 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
-    
+    void OnLook(InputValue lookValue)
+    {
+        lookInput = lookValue.Get<Vector2>();
+        cameraController.SetLookInput(lookInput);
+    }
     void SetCountText()
     {
         countText.text = "Point: " + count.ToString();
@@ -78,12 +98,32 @@ public class PlayerController : MonoBehaviour
 
     // Update is called once per frame
     void FixedUpdate()
-    {
-        // Create 3D movement vector using X and Y inputs
-        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
-        
-        //Apply force to Rigidbody to move player
-        rb.AddForce(movement * speed);
+    {   
+        if (cameraTransform == null) return;
+
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
+
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        Vector3 moveDirection = cameraForward * movementY + cameraRight * movementX;
+
+        if (moveDirection.sqrMagnitude > 1f)
+        {
+            moveDirection.Normalize();
+        }
+
+        rb.AddForce(moveDirection * speed, ForceMode.Force);
+
+        if (moveDirection.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            Quaternion smoothRotation = Quaternion.Slerp(rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime);
+            rb.MoveRotation(smoothRotation);
+        }
     }
     
     void OnTriggerEnter(Collider other)
@@ -104,13 +144,11 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            // Destroy the current object and play death sound
-            AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 1f);
-            Destroy(gameObject); 
-            
-            // Update the winText to display "You Lose!"
-            winTextObject.gameObject.SetActive(true);
-            winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
+            //Delegate to PlayerHealth to handle to wintext
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(1);
+            }
         }
 
     }

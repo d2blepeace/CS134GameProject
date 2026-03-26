@@ -21,12 +21,7 @@ public class PlayerHealth : MonoBehaviour
     
     //Check if player is daed or not (read onlya ccess)
     public bool isDead
-    {
-        get;
-        private set;
-
-    }
-    = false;
+    { get; private set;} = false;
 
     void Start()
     {
