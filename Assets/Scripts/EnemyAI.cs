@@ -18,6 +18,8 @@ public class EnemyAI : MonoBehaviour
 
     [Tooltip("Projectile prefab that has a Projectile.cs script on it.")]
     public GameObject projectilePrefab;
+    [Header("VFX")]
+    [SerializeField] private ParticleSystem shootVFX;
 
     [Header("Stats")]
     [SerializeField] private float maxHealth = 0;
@@ -130,6 +132,10 @@ public class EnemyAI : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(lookDir);
 
         if (alreadyAttacked) return;
+
+        //Play vfx smoke 
+        shootVFX.Play();      
+        
 
         // Spawn position
         Vector3 spawnPos = (shootPoint != null) ? shootPoint.position : (transform.position + Vector3.up * 1f);
