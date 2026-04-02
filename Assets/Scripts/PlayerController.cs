@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private CameraController cameraController;
     private Vector2 lookInput;
     private int count;
+    private int totalPickups;
     private float movementX;
     private float movementY;
 
@@ -22,12 +23,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
     
     [Header("UI")]
-    public TextMeshProUGUI countText;
+    [SerializeField ]public TextMeshProUGUI countText;
     public GameObject winTextObject;
     [Header("Sound")]
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private AudioClip deathSound;
-    private AudioSource sfxSource;
     private AudioSource myAudioSource;
 
     // Health system
@@ -49,12 +49,13 @@ public class PlayerController : MonoBehaviour
 
         // Find playerHealth
         playerHealth = GetComponent<PlayerHealth>();
-    
-        //Count text
-        SetCountText();
-
+        
+        // Count the collectible pickup on scene
+        totalPickups = GameObject.FindGameObjectsWithTag("PickUp").Length;
         // Activate win text
         winTextObject.SetActive(false);
+        //Count text
+        SetCountText();
 
         //Get Audio source
         myAudioSource = GetComponent<AudioSource>();
@@ -82,18 +83,6 @@ public class PlayerController : MonoBehaviour
     {
         lookInput = lookValue.Get<Vector2>();
         cameraController.SetLookInput(lookInput);
-    }
-    void SetCountText()
-    {
-        countText.text = "Point: " + count.ToString();
-
-        if (count >= 12)
-        {
-            winTextObject.SetActive(true);
-
-            // Destroy enemy
-            Destroy(GameObject.FindGameObjectWithTag("Enemy"));
-        }
     }
 
     // Update is called once per frame
@@ -131,7 +120,9 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("PickUp")) 
         {
             // Play pickup sound
-            myAudioSource.PlayOneShot(pickupSound, 0.7f);
+            if (myAudioSource != null)
+                myAudioSource.PlayOneShot(pickupSound, 1f);
+
             other.gameObject.SetActive(false);
 
             // Increase the count when collect pickup
@@ -145,11 +136,27 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             //Delegate to PlayerHealth to handle to wintext
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(1);
-            }
+            playerHealth.TakeDamage(1);
+        }
+    }
+
+    void SetCountText()
+    {
+        int remainingPickups = GameObject.FindGameObjectsWithTag("PickUp").Length;
+
+        if (countText != null)
+        {
+            countText.text = "Point: " + count + " / " + totalPickups;
         }
 
+        if (remainingPickups == 0)
+        {
+            if (winTextObject != null)
+                winTextObject.SetActive(true);
+
+            GameObject enemy = GameObject.FindGameObjectWithTag("Enemy");
+            if (enemy != null)
+                Destroy(enemy);
+        }
     }
 }
