@@ -76,11 +76,15 @@ public class PlayerHealth : MonoBehaviour
         if (parry != null) parry.enabled = false;
         Rigidbody rb = GetComponent<Rigidbody>();
 
+        //disable camera movement
+        CameraController cam = Camera.main != null ? Camera.main.GetComponent<CameraController>() : null;
+        cam.enabled = false;
+
         if (rb != null) rb.velocity = Vector3.zero;       
 
         // Show gameOver UI
-        gameOverUI.ShowGameOver();
-        Destroy(gameObject);
+        if (gameOverUI != null)
+            gameOverUI.ShowGameOver();
     }
 
     //Update UI of health based on currHealth (need refine this)

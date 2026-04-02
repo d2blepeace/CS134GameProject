@@ -17,6 +17,7 @@ public class GameOverUI : MonoBehaviour
     public void ShowGameOver()
     {
         gameOverPanel.SetActive(true);
+
         //pause game
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
@@ -36,11 +37,5 @@ public class GameOverUI : MonoBehaviour
         Time.timeScale = 1f;
         // Implement Menu scene later
         Debug.Log("Main Menu not implemented yet.");
-
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
