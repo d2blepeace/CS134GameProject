@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private GameObject winTextObject;
+    [SerializeField] private GameOverUI gameOverUI;
 
     [Header("Audio")]
     [SerializeField] private AudioClip hurtSound;
@@ -57,7 +58,8 @@ public class PlayerHealth : MonoBehaviour
 
     // Die
     public void Die()
-    {
+    {   
+        if (isDead) return;
         isDead = true;
 
         // play deathsound at current camera position (player's position)
@@ -66,13 +68,18 @@ public class PlayerHealth : MonoBehaviour
             AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 1f);
         }
 
-        // Show you lose text
-        if (winTextObject != null)
-        {
-            winTextObject.SetActive(true);
-            winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
+        // disable movement and parry 
+        PlayerController controller = GetComponent<PlayerController>();
+        if (controller != null) controller.enabled = false;
+        PlayerParry parry = GetComponent<PlayerParry>();
 
-        }
+        if (parry != null) parry.enabled = false;
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        if (rb != null) rb.velocity = Vector3.zero;       
+
+        // Show gameOver UI
+        gameOverUI.ShowGameOver();
         Destroy(gameObject);
     }
 
