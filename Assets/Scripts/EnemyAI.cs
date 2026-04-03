@@ -6,6 +6,7 @@ using UnityEngine.AI;
 // Enemy AI will patroling an area, if player is near, attack
 public class EnemyAI : MonoBehaviour
 {
+    private bool playerIsDead = false;  //to prevent shoot at player when they died
     [Header("References")]
     public NavMeshAgent agent;
     public Transform player;
@@ -57,6 +58,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        if (playerIsDead || player == null) return;
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, indicatePlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, indicatePlayer);
@@ -122,6 +124,7 @@ public class EnemyAI : MonoBehaviour
     // Attack Player
     private void AttackPlayer()
     {
+        if (playerIsDead || player == null) return;
         //Enemy will stop to attack
         agent.SetDestination(transform.position);
 
@@ -187,5 +190,20 @@ public class EnemyAI : MonoBehaviour
     private void DestroyEnemy()
     {
         Destroy(gameObject);
+    }
+
+    // Stop movement and attack when player is dead
+    public void StopEnemy()
+    {
+        playerIsDead = true;
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        alreadyAttacked = true;
+        CancelInvoke(nameof(ResetAttack));
     }
 }

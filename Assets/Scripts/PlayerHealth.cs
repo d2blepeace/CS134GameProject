@@ -34,7 +34,7 @@ public class PlayerHealth : MonoBehaviour
         // Ignore any further dmg if dead already
         if (isDead) return;
         Debug.Log($"TakeDamage called. dmg={dmg}, currHealth before={currHealth}");
-        
+
         // take dmg, decreasecurrhealth
         currHealth -= dmg;
         currHealth = Mathf.Clamp(currHealth, 0, maxHealth);
@@ -82,6 +82,12 @@ public class PlayerHealth : MonoBehaviour
 
         if (rb != null) rb.velocity = Vector3.zero;       
 
+        // Stop all enemies movement and attack
+        EnemyAI[] enemies = FindObjectsOfType<EnemyAI>();
+        foreach (EnemyAI enemy in enemies)
+        {
+            enemy.StopEnemy();
+        }
         // Show gameOver UI
         if (gameOverUI != null)
             gameOverUI.ShowGameOver();
