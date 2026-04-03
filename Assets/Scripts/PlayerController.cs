@@ -31,12 +31,21 @@ public class PlayerController : MonoBehaviour
 
     // Health system
     private PlayerHealth playerHealth;
+    //Prevent double jump
+    private bool isGrounded;
+
+    [Header("Ground Check - Prevent Double Jump")]
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private LayerMask groundLayer;
 
     // Start is called before the first frame update
     void Start()
     {
         // Only find rigidBody if focus on Player Object
         rb = GetComponent<Rigidbody>();
+
+        //Point
         count = 0;
 
         // Camera control
@@ -51,6 +60,10 @@ public class PlayerController : MonoBehaviour
         
         // Count the collectible pickup on scene
         totalPickups = GameObject.FindGameObjectsWithTag("PickUp").Length;
+
+        //Display initial point
+        countText.text = "Point: 0 / " + totalPickups;
+
         // Activate win text
         winTextObject.SetActive(false);
         //Count text
@@ -69,6 +82,10 @@ public class PlayerController : MonoBehaviour
     // Jump when space is pressed
     void OnJump(InputValue jumpValue)
     {
+        //prevent double jump
+        if (!jumpValue.isPressed) return;
+        if (!isGrounded) return;
+
         if (jumpValue.isPressed)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -82,7 +99,12 @@ public class PlayerController : MonoBehaviour
 
     // Update is called once per frame
     void FixedUpdate()
-    {   
+    {     
+        //prevent double jump
+        if (groundCheck != null)
+        {
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
+        }
         if (cameraTransform == null) return;
 
         Vector3 cameraForward = cameraTransform.forward;
