@@ -6,20 +6,18 @@ using TMPro;
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Setting")]
-    [SerializeField] private int maxHealth = 3;
+    [SerializeField] private int maxHealth;
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private GameObject winTextObject;
     [SerializeField] private GameOverUI gameOverUI;
-
-    [Header("Audio")]
+    private int currHealth;
+    [Header("SFX")]
     [SerializeField] private AudioClip hurtSound;
     [SerializeField] private AudioClip deathSound;
-
-    private int currHealth;
-    private AudioSource audioSource;
-    
+    [SerializeField] private AudioSource hurtAudioSource;
+    [SerializeField] private AudioSource deathAudioSource;
     //Check if player is daed or not (read onlya ccess)
     public bool isDead
     { get; private set;} = false;
@@ -27,7 +25,6 @@ public class PlayerHealth : MonoBehaviour
     void Start()
     {
         currHealth = maxHealth;
-        audioSource = GetComponent<AudioSource>();
         UpdateHealthUI();
     }
 
@@ -36,10 +33,13 @@ public class PlayerHealth : MonoBehaviour
     {
         // Ignore any further dmg if dead already
         if (isDead) return;
-
+        Debug.Log($"TakeDamage called. dmg={dmg}, currHealth before={currHealth}");
+        
         // take dmg, decreasecurrhealth
         currHealth -= dmg;
         currHealth = Mathf.Clamp(currHealth, 0, maxHealth);
+        Debug.Log($"currHealth after={currHealth}");
+
 
         //Update ui based on health
         UpdateHealthUI();
@@ -49,9 +49,9 @@ public class PlayerHealth : MonoBehaviour
         else
         {
             // Play hurtsound
-            if (hurtSound != null && audioSource != null)
+            if (hurtSound != null && hurtAudioSource != null)
             {
-                audioSource.PlayOneShot(hurtSound, 1f);
+                hurtAudioSource.PlayOneShot(hurtSound, 1f);
             }
         }
     }
@@ -63,9 +63,9 @@ public class PlayerHealth : MonoBehaviour
         isDead = true;
 
         // play deathsound at current camera position (player's position)
-        if (deathSound != null && audioSource != null)
+        if (deathSound != null && deathAudioSource != null)
         {
-            AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position, 1f);
+            deathAudioSource.PlayOneShot(deathSound, 1f);
         }
 
         // disable movement and parry 
