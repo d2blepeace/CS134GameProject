@@ -1243,26 +1243,6 @@ PrefabInstance:
       propertyPath: countText
       value: 
       objectReference: {fileID: 608225039}
-    - target: {fileID: 1184488661832340527, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: deathSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 47fc5ea325057a5448d13a21f7f5702e, type: 3}
-    - target: {fileID: 1184488661832340527, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: pickupSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 0c93e680c92dbc641a09b259c3878c3a, type: 3}
-    - target: {fileID: 2834245656936292486, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: hurtSound
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2834245656936292486, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: deathSound
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2834245656936292486, guid: ecccb88f67e344942a999dfbac524c24,
         type: 3}
       propertyPath: gameOverUI
@@ -1272,16 +1252,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 4604510393055041198, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5515572560685495641, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6074542786084678486, guid: ecccb88f67e344942a999dfbac524c24,
         type: 3}

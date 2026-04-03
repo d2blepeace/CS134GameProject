@@ -27,8 +27,7 @@ public class PlayerController : MonoBehaviour
     public GameObject winTextObject;
     [Header("Sound")]
     [SerializeField] private AudioClip pickupSound;
-    [SerializeField] private AudioClip deathSound;
-    private AudioSource myAudioSource;
+    [SerializeField] private AudioSource pickupAudioSource;
 
     // Health system
     private PlayerHealth playerHealth;
@@ -56,10 +55,6 @@ public class PlayerController : MonoBehaviour
         winTextObject.SetActive(false);
         //Count text
         SetCountText();
-
-        //Get Audio source
-        myAudioSource = GetComponent<AudioSource>();
-        if (myAudioSource == null) myAudioSource = gameObject.AddComponent<AudioSource>();
     }
 
     // Called when input movement is found
@@ -120,8 +115,8 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("PickUp")) 
         {
             // Play pickup sound
-            if (myAudioSource != null)
-                myAudioSource.PlayOneShot(pickupSound, 1f);
+            if (pickupAudioSource != null && pickupSound != null)
+                pickupAudioSource.PlayOneShot(pickupSound, 1f);
 
             other.gameObject.SetActive(false);
 
@@ -154,9 +149,6 @@ public class PlayerController : MonoBehaviour
             if (winTextObject != null)
                 winTextObject.SetActive(true);
 
-            GameObject enemy = GameObject.FindGameObjectWithTag("Enemy");
-            if (enemy != null)
-                Destroy(enemy);
         }
     }
 }

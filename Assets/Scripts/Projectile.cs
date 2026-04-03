@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour 
 {
+    private bool hasHit = false;
     [Header("Projectile Setting")]
     [SerializeField] private float speed = 14f;
     [SerializeField] private float lifetime = 5f;
@@ -52,7 +53,7 @@ public class Projectile : MonoBehaviour
     {
         reflected = true;
 
-         if (Owner != null )
+        if (Owner != null )
         {
             //aim directly at enemy's current global position
             Vector3 aimDir = (Owner.position - transform.position).normalized;
@@ -81,26 +82,33 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision) 
     {
+        if (hasHit) return;
+        hasHit = true;
+
         // Let the projectile collide freely to enemy after being parried
         if (collision.transform == shooter && !reflected) return;
 
-        // Reflected the projectile back to enemy and do damage
+        // Reflected projectile hits enemy
         EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
-        if (enemy != null && reflected) {
-            enemy.TakeDamage((int) damage);
+        if (enemy != null && reflected)
+        {
+            enemy.TakeDamage((int)damage);
             Destroy(gameObject);
             return;
         }
 
-        //If it hits player before parried successfully
-        if(collision.gameObject.CompareTag("Player") && !reflected)
+        // Projectile hits player before parried
+        if (collision.gameObject.CompareTag("Player") && !reflected)
         {
             PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-            if (playerHealth != null) playerHealth.TakeDamage(1);
+            if (playerHealth != null)
+                playerHealth.TakeDamage(1);
+
             Destroy(gameObject);
             return;
         }
-        // Destroy on hitting other object: walls, dynamic object
+
+        // Destroy on hitting other object
         Destroy(gameObject);
     }
 }
