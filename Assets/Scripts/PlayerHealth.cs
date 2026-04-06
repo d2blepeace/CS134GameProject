@@ -98,7 +98,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (healthText!=null)
         {
-            healthText.text = "HP: " + currHealth + " / " + maxHealth;
+            healthText.text = "Health: " + currHealth + " / " + maxHealth;
         }
     }
 }
