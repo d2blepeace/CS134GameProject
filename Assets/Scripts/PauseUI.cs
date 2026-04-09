@@ -81,9 +81,8 @@ public class PauseUI : MonoBehaviour
     public void ReturnToMainMenu()
     {
         Time.timeScale = 1f;
-        Debug.Log("Main Menu not implemented yet.");
         // TODO Later:
-        // SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void ExitGame()

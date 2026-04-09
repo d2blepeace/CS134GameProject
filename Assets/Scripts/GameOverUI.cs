@@ -35,7 +35,7 @@ public class GameOverUI : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1f;
-        // Implement Menu scene later
-        Debug.Log("Main Menu not implemented yet.");
+
+        SceneManager.LoadScene("MainMenu");
     }
 }
