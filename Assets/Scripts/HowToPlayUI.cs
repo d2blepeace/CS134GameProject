@@ -9,7 +9,6 @@ public class HowToPlayUI : MonoBehaviour
     [SerializeField] private GameObject howToPlayPanel;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private CameraController cameraController;
-
     private bool isToggle = false;
 
     void Start()
@@ -35,7 +34,7 @@ public class HowToPlayUI : MonoBehaviour
     public void ToggleHowToPlay()
     {
         isToggle = !isToggle;
-
+        
         if (howToPlayPanel != null)
             howToPlayPanel.SetActive(isToggle);
 
