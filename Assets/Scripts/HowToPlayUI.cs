@@ -7,10 +7,14 @@ public class HowToPlayUI : MonoBehaviour
 {
     [Header("How to play UI References")]
     [SerializeField] private GameObject howToPlayPanel;
+    [SerializeField] private PauseUI pauseUI;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private CameraController cameraController;
     private bool isToggle = false;
 
+    // For external scripts to check if the pause menu is open
+    public bool IsOpen => isToggle;    
+    
     void Start()
     {
         if (howToPlayPanel != null)
@@ -18,6 +22,10 @@ public class HowToPlayUI : MonoBehaviour
 
         if (playerHealth == null)
             playerHealth = FindObjectOfType<PlayerHealth>();
+
+        if (pauseUI == null)
+            pauseUI = FindObjectOfType<PauseUI>();
+        
         if (cameraController == null && Camera.main != null)
             cameraController = Camera.main.GetComponent<CameraController>();
     }
@@ -28,6 +36,8 @@ public class HowToPlayUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
             if (playerHealth != null && playerHealth.isDead) return;
+            if (pauseUI != null && pauseUI.IsPaused) return;
+
             ToggleHowToPlay();
         }
     }

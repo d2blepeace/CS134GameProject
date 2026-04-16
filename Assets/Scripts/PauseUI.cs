@@ -11,6 +11,7 @@ public class PauseUI : MonoBehaviour
     [SerializeField] private HowToPlayUI howToPlayUI;
 
     private bool isPaused = false;
+    public bool IsPaused => isPaused;
 
     void Start()
     {
@@ -32,6 +33,7 @@ public class PauseUI : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (playerHealth != null && playerHealth.isDead) return;
+            if (howToPlayUI != null && howToPlayUI.IsOpen) return;
 
             TogglePause();
         }
