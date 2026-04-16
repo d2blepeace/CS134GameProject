@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private Rigidbody rb;
-    
     [SerializeField] private float speed = 0;
     [SerializeField] private float jumpForce = 0;
     [SerializeField] private float turnSpeed = 12f;
@@ -24,7 +23,8 @@ public class PlayerController : MonoBehaviour
     
     [Header("UI")]
     [SerializeField ]public TextMeshProUGUI countText;
-    public GameObject winTextObject;
+    [SerializeField] private YouWinUI youWinUI;    
+    
     [Header("Sound")]
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private AudioSource pickupAudioSource;
@@ -64,8 +64,9 @@ public class PlayerController : MonoBehaviour
         //Display initial point
         countText.text = "Point: 0 / " + totalPickups;
 
-        // Activate win text
-        winTextObject.SetActive(false);
+        // Activate win UI
+        if (youWinUI == null) youWinUI = FindObjectOfType<YouWinUI>();
+
         //Count text
         SetCountText();
     }
@@ -166,11 +167,11 @@ public class PlayerController : MonoBehaviour
             countText.text = "Point: " + count + " / " + totalPickups;
         }
 
+        // if there is no PickUp objects left, show youWinUI
         if (remainingPickups == 0)
         {
-            if (winTextObject != null)
-                winTextObject.SetActive(true);
-
+            if (youWinUI != null)
+                youWinUI.ShowYouWin();
         }
     }
 }
