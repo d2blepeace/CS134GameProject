@@ -66,4 +66,21 @@ public class CameraController : MonoBehaviour
     {
         lookInput = input;
     }
+
+    // For setting of mouse sensitivity
+    public void SetMouseSensitivity(float sliderValue)
+    {
+        float convertedValue = Mathf.Clamp(sliderValue / 100f, 0.1f, 2f);
+        mouseSensitivityX = convertedValue;
+        mouseSensitivityY = convertedValue;
+    }
+    public void SetMouseSensitivityX(float value)
+    {
+        mouseSensitivityX = value;
+    }
+
+    public void SetMouseSensitivityY(float value)
+    {
+        mouseSensitivityY = value;
+    }
 }

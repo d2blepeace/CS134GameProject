@@ -6,17 +6,23 @@ public class PauseUI : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject settingsPanel;
+
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private CameraController cameraController;
     [SerializeField] private HowToPlayUI howToPlayUI;
 
     private bool isPaused = false;
+    private bool isInSettings = false;
     public bool IsPaused => isPaused;
 
     void Start()
     {
         if (pausePanel != null)
             pausePanel.SetActive(false);
+
+        if (settingsPanel != null) 
+            settingsPanel.SetActive(false);
 
         if (playerHealth == null)
             playerHealth = FindObjectOfType<PlayerHealth>();
@@ -35,6 +41,12 @@ public class PauseUI : MonoBehaviour
             if (playerHealth != null && playerHealth.isDead) return;
             if (howToPlayUI != null && howToPlayUI.IsOpen) return;
 
+            if (isInSettings)
+            {
+                BackToPauseMenu();
+                return;
+            }
+
             TogglePause();
         }
     }
@@ -45,6 +57,9 @@ public class PauseUI : MonoBehaviour
 
         if (pausePanel != null)
             pausePanel.SetActive(isPaused);
+
+        if (settingsPanel != null)
+            settingsPanel.SetActive(false);
 
         if (isPaused)
         {
@@ -76,15 +91,33 @@ public class PauseUI : MonoBehaviour
 
     public void OpenSettings()
     {
-        //TODO Later:
-        Debug.Log("Settings menu not implemented yet.");
+        if (!isPaused) return;
+        isInSettings = true;
+
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+        
+        if (settingsPanel != null)
+            settingsPanel.SetActive(true);
     }
 
     public void ReturnToMainMenu()
     {
         Time.timeScale = 1f;
-        // TODO Later:
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void BackToPauseMenu()
+    {
+        if (!isPaused) return;
+
+        isInSettings = false;
+
+        if (settingsPanel != null)
+            settingsPanel.SetActive(false);
+
+        if (pausePanel != null)
+            pausePanel.SetActive(true);
     }
 
     public void ExitGame()
