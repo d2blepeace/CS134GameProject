@@ -21,7 +21,16 @@ public class CameraController : MonoBehaviour
     private float yaw;
     private float pitch = 15f;
     private Vector2 lookInput;
-    
+    private Vector3 currentCameraPosition;
+
+    //Camera colliosion
+    [Header("Camera Collision")]
+    [SerializeField] private LayerMask collisionMask;
+    [SerializeField] private float cameraRadius = 0.25f;
+    [SerializeField] private float minDistance = 1.0f;
+    [SerializeField] private float collisionBuffer = 0.1f;
+    [SerializeField] private float positionSmoothSpeed = 12f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +43,8 @@ public class CameraController : MonoBehaviour
         Vector3 currRotation = transform.eulerAngles;
         yaw = currRotation.y;
         pitch = currRotation.x;
+
+        currentCameraPosition = transform.position;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -56,9 +67,21 @@ public class CameraController : MonoBehaviour
         //Rotation relative to movement
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
         Vector3 focusPoint = player.position + Vector3.up * heightOffset;
-        Vector3 cameraOffset = rotation * new Vector3(0f, 0f, -distance);
+        Vector3 desiredOffset = rotation * new Vector3(0f, 0f, -distance);
+        Vector3 desiredPosition = focusPoint + desiredOffset;
+        Vector3 castDirection = desiredOffset.normalized;
 
-        transform.position = focusPoint + cameraOffset;
+        float targetDistance = distance;
+        if (Physics.SphereCast(focusPoint, cameraRadius, castDirection, 
+                                    out RaycastHit hit, distance, collisionMask, QueryTriggerInteraction.Ignore))
+        {
+            targetDistance = Mathf.Clamp(hit.distance - collisionBuffer, minDistance, distance);
+        }
+
+        Vector3 finalPosition = focusPoint + castDirection * targetDistance;
+        currentCameraPosition = finalPosition;
+
+        transform.position = currentCameraPosition;
         transform.LookAt(focusPoint);
     }
 
