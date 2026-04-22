@@ -7,6 +7,8 @@ public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Setting")]
     [SerializeField] private int maxHealth;
+    [Header("Y to fall to death")]
+    [SerializeField] private float fallDeathY = -50f;
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI healthText;
@@ -26,6 +28,15 @@ public class PlayerHealth : MonoBehaviour
     {
         currHealth = maxHealth;
         UpdateHealthUI();
+    }
+        void Update()
+    {
+        if (isDead) return;
+
+        if (transform.position.y < fallDeathY)
+        {
+            Die();
+        }
     }
 
     // if player take damage, player hurtsound, call UpdateHealth(), if health<=0 == die
@@ -67,7 +78,6 @@ public class PlayerHealth : MonoBehaviour
         {
             deathAudioSource.PlayOneShot(deathSound, 1f);
         }
-
         // disable movement and parry 
         PlayerController controller = GetComponent<PlayerController>();
         if (controller != null) controller.enabled = false;
