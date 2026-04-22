@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private Rigidbody rb;
     [SerializeField] private float speed = 0;
-    [SerializeField] private float jumpForce = 0;
+    [SerializeField] private float jumpForce = 8;
     [SerializeField] private float turnSpeed = 12f;
     [SerializeField] private Transform cameraTransform;
     
