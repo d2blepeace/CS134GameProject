@@ -418,12 +418,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!82 &841661142 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 7303036907920904115, guid: ecccb88f67e344942a999dfbac524c24,
-    type: 3}
-  m_PrefabInstance: {fileID: 585503704416266405}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &902646289
 GameObject:
   m_ObjectHideFlags: 0
@@ -1387,16 +1381,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8803373210919264717, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: parrySuccessSfx
-      value: 
-      objectReference: {fileID: 8300000, guid: f599642ccd083e54984416e1e5fe144e, type: 3}
-    - target: {fileID: 8803373210919264717, guid: ecccb88f67e344942a999dfbac524c24,
-        type: 3}
-      propertyPath: parryAudioSource
-      value: 
-      objectReference: {fileID: 841661142}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

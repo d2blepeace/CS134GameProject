@@ -608,7 +608,8 @@ MonoBehaviour:
   parryTrigger: {fileID: 584208989315637023}
   animator: {fileID: 8167904131485824988}
   parryActiveSfx: {fileID: 8300000, guid: 19de047a209ff1c47a4567b255326f32, type: 3}
-  audioSource: {fileID: 7303036907920904115}
+  parryAudioSource: {fileID: 7303036907920904115}
+  parrySuccessSfx: {fileID: 8300000, guid: f599642ccd083e54984416e1e5fe144e, type: 3}
 --- !u!114 &2834245656936292486
 MonoBehaviour:
   m_ObjectHideFlags: 0

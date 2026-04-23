@@ -74,7 +74,7 @@ public class Projectile : MonoBehaviour
         if (parry == null) return;
 
         // Only reflect projectile back if parry window is currently active
-        if (parry.IsParryActive)
+        if (parry.IsParryActive && !reflected)
         {
             Reflect(other.transform);
             // play parrySuccessSFX
@@ -85,8 +85,15 @@ public class Projectile : MonoBehaviour
     private void OnCollisionEnter(Collision collision) 
     {
         if (hasHit) return;
-        hasHit = true;
 
+        // Reflected projectile should not damage player
+        if (collision.gameObject.CompareTag("Player") && reflected)
+        {
+            return;
+        }
+
+        hasHit = true;
+        
         // Let the projectile collide freely to enemy after being parried
         if (collision.transform == shooter && !reflected) return;
 
