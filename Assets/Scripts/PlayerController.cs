@@ -25,9 +25,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField ]public TextMeshProUGUI countText;
     [SerializeField] private YouWinUI youWinUI;    
     
-    [Header("Sound")]
+    [Header("SFX")]
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private AudioSource pickupAudioSource;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioSource jumpAudioSource;
 
     // Health system
     private PlayerHealth playerHealth;
@@ -90,6 +92,12 @@ public class PlayerController : MonoBehaviour
         if (jumpValue.isPressed)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+            // Play jumpSFX
+            if (jumpAudioSource != null && jumpSound != null)
+            {
+                jumpAudioSource.PlayOneShot(jumpSound);
+            }
         }
     }
     void OnLook(InputValue lookValue)

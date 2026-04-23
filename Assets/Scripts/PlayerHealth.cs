@@ -62,7 +62,7 @@ public class PlayerHealth : MonoBehaviour
             // Play hurtsound
             if (hurtSound != null && hurtAudioSource != null)
             {
-                hurtAudioSource.PlayOneShot(hurtSound, 1f);
+                hurtAudioSource.PlayOneShot(hurtSound);
             }
         }
     }
@@ -76,7 +76,7 @@ public class PlayerHealth : MonoBehaviour
         // play deathsound at current camera position (player's position)
         if (deathSound != null && deathAudioSource != null)
         {
-            deathAudioSource.PlayOneShot(deathSound, 1f);
+            deathAudioSource.PlayOneShot(deathSound);
         }
         // disable movement and parry 
         PlayerController controller = GetComponent<PlayerController>();

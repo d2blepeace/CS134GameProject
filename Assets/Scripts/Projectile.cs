@@ -77,6 +77,8 @@ public class Projectile : MonoBehaviour
         if (parry.IsParryActive)
         {
             Reflect(other.transform);
+            // play parrySuccessSFX
+            parry.PlayParrySuccessSfx();
         }
     }
 

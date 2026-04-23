@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /**
- This is how parry system working:
- Player press Parry -> OnParry() called -> StartCoroutine() call DoParry() 
- -> Enable ParryZone collider -> Projectile enters trigger -> ParryZone checks IsParryActive 
- -> projectile got reflected back
+    This is how parry system working:
+    Player press Parry -> OnParry() called -> StartCoroutine() call DoParry() 
+    -> Enable ParryZone collider -> Projectile enters trigger -> ParryZone checks IsParryActive 
+    -> projectile got reflected back
 */
 
 public class PlayerParry : MonoBehaviour
@@ -18,8 +18,12 @@ public class PlayerParry : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
+
+    [Header("SFX")]
     [SerializeField] private AudioClip parryActiveSfx;
-    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource parryAudioSource;
+    [SerializeField] private AudioClip parrySuccessSfx;
+
 
     private bool parryActive;
     private bool onCooldown;
@@ -38,6 +42,14 @@ public class PlayerParry : MonoBehaviour
         StartCoroutine(DoParry());
     }
 
+    public void PlayParrySuccessSfx()
+    {
+        if (parryAudioSource != null && parrySuccessSfx != null)
+        {
+            parryAudioSource.PlayOneShot(parrySuccessSfx, 0.5f);
+        }
+    }
+
     // Handle parry timing 
     private IEnumerator DoParry()
     {
@@ -48,10 +60,10 @@ public class PlayerParry : MonoBehaviour
         if (animator != null) animator.SetTrigger("Parry");
 
         // Play parrysfx
-        if (audioSource != null && parryActiveSfx != null) audioSource.PlayOneShot(parryActiveSfx); 
+        if ( parryAudioSource != null && parryActiveSfx != null) parryAudioSource.PlayOneShot(parryActiveSfx);  
 
         parryActive = true;
-
+        
         // Enable parry detection and wait for parry window
         if (parryTrigger != null) {parryTrigger.enabled = true;}
 
