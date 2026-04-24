@@ -21,7 +21,9 @@ public class EnemyAI : MonoBehaviour
     public GameObject projectilePrefab;
     [Header("VFX")]
     [SerializeField] private ParticleSystem shootVFX;
-
+    [Header("Death SFX")]
+    [SerializeField] private AudioClip deathSfx;
+    [SerializeField] private AudioSource deathAudioSource;
     [Header("Stats")]
     [SerializeField] private float maxHealth = 0;
     private float currHealth;
@@ -184,11 +186,13 @@ public class EnemyAI : MonoBehaviour
 
         if (currHealth <= 0 )
         {
-            Invoke(nameof(DestroyEnemy), 0.5f);
+            DestroyEnemy();
         }        
     }
     private void DestroyEnemy()
     {
+        AudioSource.PlayClipAtPoint(deathSfx, transform.position);
+
         Destroy(gameObject);
     }
 
