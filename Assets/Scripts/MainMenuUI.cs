@@ -8,6 +8,9 @@ public class MainMenuUI : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject resumeButton;
+    [SerializeField] private GameObject mainMenuPanel;
+
+    [SerializeField] private GameObject settingsPanel;
 
     private void Start()
     {   
@@ -66,7 +69,14 @@ public class MainMenuUI : MonoBehaviour
 
     public void OpenSetting()
     {
-        Debug.Log("Settings not implemented yet.");
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        if (settingsPanel != null) settingsPanel.SetActive(true);
+    }
+
+    public void CloseSetting()
+    {
+        if (settingsPanel != null) settingsPanel.SetActive(false); 
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
     }
 
     public void QuitGame()
