@@ -9,7 +9,7 @@ public class MainMenuUI : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject resumeButton;
     [SerializeField] private GameObject mainMenuPanel;
-
+    [SerializeField] private GameObject tutorialPanel;
     [SerializeField] private GameObject settingsPanel;
 
     private void Start()
@@ -78,7 +78,16 @@ public class MainMenuUI : MonoBehaviour
         if (settingsPanel != null) settingsPanel.SetActive(false); 
         if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
     }
-
+    public void OpenTutorial()
+    {
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        if (tutorialPanel != null) tutorialPanel.SetActive(true);
+    }
+    public void CloseTutorial()
+    {
+        if (tutorialPanel != null) tutorialPanel.SetActive(false);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+    }
     public void QuitGame()
     {
         Debug.Log("Quitting game...");
