@@ -63,9 +63,6 @@ public class PauseUI : MonoBehaviour
         {
             Time.timeScale = 0f;
 
-            if (levelMusic != null)
-                levelMusic.LowerMusicForPause();
-
             if (cameraController != null)
                 cameraController.enabled = false;
 
@@ -75,9 +72,6 @@ public class PauseUI : MonoBehaviour
         else
         {
             Time.timeScale = 1f;
-            
-            if (levelMusic != null)
-                levelMusic.RestoreMusicAfterPause();
 
             if (cameraController != null)
                 cameraController.enabled = true;
