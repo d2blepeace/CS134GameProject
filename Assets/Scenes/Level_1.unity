@@ -2146,6 +2146,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1783359819}
+  - {fileID: 139962256}
   - {fileID: 745606573}
   - {fileID: 1169765883}
   - {fileID: 1191895778}
@@ -2164,7 +2165,6 @@ Transform:
   - {fileID: 1930108158}
   - {fileID: 2054029103}
   - {fileID: 598052941}
-  - {fileID: 139962256}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &711007289
@@ -6230,7 +6230,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
