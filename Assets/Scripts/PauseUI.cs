@@ -7,10 +7,10 @@ public class PauseUI : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject settingsPanel;
-
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private CameraController cameraController;
     [SerializeField] private HowToPlayUI howToPlayUI;
+    [SerializeField] private LevelMusic levelMusic;
 
     private bool isPaused = false;
     private bool isInSettings = false;
@@ -18,20 +18,18 @@ public class PauseUI : MonoBehaviour
 
     void Start()
     {
-        if (pausePanel != null)
-            pausePanel.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
 
-        if (settingsPanel != null) 
-            settingsPanel.SetActive(false);
+        if (settingsPanel != null) settingsPanel.SetActive(false);
 
-        if (playerHealth == null)
-            playerHealth = FindObjectOfType<PlayerHealth>();
+        if (playerHealth == null) playerHealth = FindObjectOfType<PlayerHealth>();
 
         if (cameraController == null && Camera.main != null)
             cameraController = Camera.main.GetComponent<CameraController>();
 
-        if (howToPlayUI == null)
-            howToPlayUI = FindObjectOfType<HowToPlayUI>();
+        if (howToPlayUI == null) howToPlayUI = FindObjectOfType<HowToPlayUI>();
+        
+        if (levelMusic == null) levelMusic = FindObjectOfType<LevelMusic>();
     }
 
     void Update()
@@ -65,6 +63,9 @@ public class PauseUI : MonoBehaviour
         {
             Time.timeScale = 0f;
 
+            if (levelMusic != null)
+                levelMusic.LowerMusicForPause();
+
             if (cameraController != null)
                 cameraController.enabled = false;
 
@@ -74,6 +75,9 @@ public class PauseUI : MonoBehaviour
         else
         {
             Time.timeScale = 1f;
+            
+            if (levelMusic != null)
+                levelMusic.RestoreMusicAfterPause();
 
             if (cameraController != null)
                 cameraController.enabled = true;

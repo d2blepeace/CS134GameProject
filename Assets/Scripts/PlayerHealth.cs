@@ -20,6 +20,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private AudioSource hurtAudioSource;
     [SerializeField] private AudioSource deathAudioSource;
+    [SerializeField] private LevelMusic levelMusic;
     //Check if player is daed or not (read onlya ccess)
     public bool isDead
     { get; private set;} = false;
@@ -28,6 +29,7 @@ public class PlayerHealth : MonoBehaviour
     {
         currHealth = maxHealth;
         UpdateHealthUI();
+        if (levelMusic == null) levelMusic = FindObjectOfType<LevelMusic>();
     }
         void Update()
     {
@@ -98,6 +100,8 @@ public class PlayerHealth : MonoBehaviour
         {
             enemy.StopEnemy();
         }
+        //Stop Level Music
+        if (levelMusic != null) levelMusic.StopMusic();
         // Show gameOver UI
         if (gameOverUI != null)
             gameOverUI.ShowGameOver();

@@ -9,6 +9,7 @@ public class YouWinUI : MonoBehaviour
     [SerializeField] private GameObject youWinPanel;
     [SerializeField] private GameObject nextLevelButton;
     [SerializeField] private CameraController cameraController;
+    [SerializeField] private LevelMusic levelMusic;
     private bool hasWon = false;
 
     // Start is called before the first frame update
@@ -18,6 +19,8 @@ public class YouWinUI : MonoBehaviour
 
         if (cameraController == null && Camera.main != null)
             cameraController = Camera.main.GetComponent<CameraController>();
+
+        if (levelMusic == null) levelMusic = FindObjectOfType<LevelMusic>();
     }
 
     public void ShowYouWin()
@@ -42,6 +45,8 @@ public class YouWinUI : MonoBehaviour
         if (cameraController != null) cameraController.enabled = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        
+        if (levelMusic != null)levelMusic.StopMusic();
     }
 
     public void SaveProgress()
