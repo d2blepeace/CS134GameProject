@@ -546,7 +546,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 1170413736479108212}
   speed: 10
-  jumpForce: 4
+  jumpForce: 6.5
   turnSpeed: 12
   cameraTransform: {fileID: 0}
   countText: {fileID: 0}
@@ -631,6 +631,7 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 47fc5ea325057a5448d13a21f7f5702e, type: 3}
   hurtAudioSource: {fileID: 8557527938012640096}
   deathAudioSource: {fileID: 8043753359246190047}
+  levelMusic: {fileID: 0}
 --- !u!1 &3964564279256411920
 GameObject:
   m_ObjectHideFlags: 0
