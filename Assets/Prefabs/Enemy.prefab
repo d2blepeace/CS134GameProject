@@ -140,8 +140,8 @@ MonoBehaviour:
   deathSfx: {fileID: 8300000, guid: 0feae0bf4afc34448b0532b605c8967a, type: 3}
   deathAudioSource: {fileID: 2650593222535541466}
   maxHealth: 1
-  sightRange: 6
-  attackRange: 5
+  sightRange: 8
+  attackRange: 7
   playerInSightRange: 1
   playerInAttackRange: 1
   patrolPoint: {x: 0, y: 0, z: 0}
