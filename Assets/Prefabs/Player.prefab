@@ -555,6 +555,8 @@ MonoBehaviour:
   pickupAudioSource: {fileID: 3825865850391998736}
   jumpSound: {fileID: 8300000, guid: 8a86a7da6f92cba4cbf560829c7d7be9, type: 3}
   jumpAudioSource: {fileID: 8552150592303298505}
+  boxHitSound: {fileID: 0}
+  boxHitAudioSource: {fileID: 0}
   groundCheck: {fileID: 246156248192950718}
   groundCheckRadius: 0.2
   groundLayer:

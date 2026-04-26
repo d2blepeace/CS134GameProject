@@ -60,10 +60,10 @@ public class YouWinUI : MonoBehaviour
         }
         else if (currentScene == "Level_2")
         {
-            PlayerPrefs.SetString("ResumeScene", "Final_level");
+            PlayerPrefs.SetString("ResumeScene", "Level_3");
             PlayerPrefs.SetInt("HasResume", 1);
         }
-        else if (currentScene == "Final_level")
+        else if (currentScene == "Level_3")
         {
             PlayerPrefs.DeleteKey("ResumeScene");
             PlayerPrefs.SetInt("HasResume", 0);
@@ -84,7 +84,7 @@ public class YouWinUI : MonoBehaviour
 
         else if (currentScene == "Level_2")
         {
-            SceneManager.LoadScene("Final_level");
+            SceneManager.LoadScene("Level_3");
         }
 
     }
