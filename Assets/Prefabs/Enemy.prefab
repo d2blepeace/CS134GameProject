@@ -140,13 +140,13 @@ MonoBehaviour:
   deathSfx: {fileID: 8300000, guid: 0feae0bf4afc34448b0532b605c8967a, type: 3}
   deathAudioSource: {fileID: 2650593222535541466}
   maxHealth: 1
-  sightRange: 10
+  sightRange: 6
   attackRange: 5
   playerInSightRange: 1
   playerInAttackRange: 1
   patrolPoint: {x: 0, y: 0, z: 0}
-  patrolPointRange: 15
-  timeBetweenAttack: 3
+  patrolPointRange: 10
+  timeBetweenAttack: 2
   shootingSfx: {fileID: 8300000, guid: 77fc4acef0462e240b40913b3695c301, type: 3}
   shootingAudioSource: {fileID: 9214229171911465813}
   alertSfx: {fileID: 8300000, guid: 1002c18370a6f4741bd14420265123f0, type: 3}
@@ -161,7 +161,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 5
+  m_Speed: 4
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
