@@ -90,29 +90,32 @@ public class EnemyAI : MonoBehaviour
         if (!patrolPointSet) SearchPatrolPoint();
 
         if (patrolPointSet)
-        {
             agent.SetDestination(patrolPoint);
-        }
 
         Vector3 distanceToPatrolPoint = transform.position - patrolPoint;
 
-        //If aptrol point reach, search new one to patrol
         if (distanceToPatrolPoint.magnitude < 1f)
-        {
             patrolPointSet = false;
-        }
+
+        // If the agent has stopped moving but hasn't reached the point, pick a new one
+        if (patrolPointSet && !agent.pathPending && agent.remainingDistance < 0.5f)
+            patrolPointSet = false;
     }
     void SearchPatrolPoint()
     {
-        // calculate random patrol point in range
-        float ZPatrolPoint = Random.Range(-patrolPointRange, patrolPointRange);
-        float XPatrolPoint = Random.Range(-patrolPointRange, patrolPointRange);
+        float z = Random.Range(-patrolPointRange, patrolPointRange);
+        float x = Random.Range(-patrolPointRange, patrolPointRange);
 
-        patrolPoint = new Vector3(transform.position.x + XPatrolPoint, transform.position.y, transform.position.z + ZPatrolPoint);
+        Vector3 randomPoint = new Vector3(
+            transform.position.x + x,
+            transform.position.y,
+            transform.position.z + z
+        );
 
-        //Indicate where is ground to prevent enemy fall from map
-        if (Physics.Raycast(patrolPoint, -transform.up, 2f, indicateGround))
+        // Only accept the point if it lands on the NavMesh
+        if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
+            patrolPoint = hit.position;
             patrolPointSet = true;
         }
     }   
