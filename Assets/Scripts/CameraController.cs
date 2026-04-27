@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// Third-person orbit camera that follows the player.
+///   - Mouse input with adjustable sensitivity
+///   - Pitch clamping to prevent flipping
+///   - SphereCast-based collision to prevent clipping through walls
+///   - Exposes SetMouseSensitivity() for the settings UI slider
+/// 
+/// Runs in LateUpdate so it always reads the player's final position for the frame
 public class CameraController : MonoBehaviour
 {
     public Transform player;
@@ -34,18 +41,21 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Auto-find the player if not assigned
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p!=null) player = p.transform;
         }
 
+        // Initialise angles from the camera's current rotation
         Vector3 currRotation = transform.eulerAngles;
         yaw = currRotation.y;
         pitch = currRotation.x;
 
         currentCameraPosition = transform.position;
 
+        // Lock and hide the cursor for gameplay
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -54,23 +64,25 @@ public class CameraController : MonoBehaviour
     {
         lookInput = val.Get<Vector2>();
     }
-    // Set camera position in LateUpdate(), run every frame after Update();
+
+    /// Computes the camera's orbit position and applies collision avoidance
     void LateUpdate()
     {
         if (player == null) return;
 
-        //Minimum and Maximum that camera can look up or down
+        // Accumulate yaw/pitch from look input, clamp pitch to prevent flipping
         yaw += lookInput.x * mouseSensitivityX;
         pitch -= lookInput.y * mouseSensitivityY;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-        //Rotation relative to movement
+        // Calculate desired orbit position behind the player
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
         Vector3 focusPoint = player.position + Vector3.up * heightOffset;
         Vector3 desiredOffset = rotation * new Vector3(0f, 0f, -distance);
         Vector3 desiredPosition = focusPoint + desiredOffset;
         Vector3 castDirection = desiredOffset.normalized;
 
+        // SphereCast from the focus point to detect walls between camera and player
         float targetDistance = distance;
         if (Physics.SphereCast(focusPoint, cameraRadius, castDirection, 
                                     out RaycastHit hit, distance, collisionMask, QueryTriggerInteraction.Ignore))
@@ -78,6 +90,7 @@ public class CameraController : MonoBehaviour
             targetDistance = Mathf.Clamp(hit.distance - collisionBuffer, minDistance, distance);
         }
 
+        // Apply the final position and look at the player
         Vector3 finalPosition = focusPoint + castDirection * targetDistance;
         currentCameraPosition = finalPosition;
 
@@ -85,6 +98,7 @@ public class CameraController : MonoBehaviour
         transform.LookAt(focusPoint);
     }
 
+    // called by PlayerController.OnLook to forward input each frame
     public void SetLookInput(Vector2 input)
     {
         lookInput = input;

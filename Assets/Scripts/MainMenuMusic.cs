@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// Controls the main menu's background music volume via a UI slider
+// Reads the AudioSource's initial volume as the slider's starting value
 public class MainMenuMusic : MonoBehaviour
 {
     [Header("Audio Source")]

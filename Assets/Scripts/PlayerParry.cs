@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /**
+    Timed parry system 
+
     This is how parry system working:
     Player press Parry -> OnParry() called -> StartCoroutine() call DoParry() 
     -> Enable ParryZone collider -> Projectile enters trigger -> ParryZone checks IsParryActive 
@@ -29,10 +31,12 @@ public class PlayerParry : MonoBehaviour
     private bool onCooldown;
     void Awake()
     {
-        // parryActive check is false if there is not any thing to trigger the parry
+        // Start with the parry trigger disabled; it only activates during the parry window
         if (parryTrigger != null) parryTrigger.enabled = false;
 
     }
+
+    // initiates the parry if not on cooldown
     void OnParry(InputValue parryValue)
     {
         // ignore input if parry button isn't pressed and cooldown is still occuring
@@ -42,6 +46,7 @@ public class PlayerParry : MonoBehaviour
         StartCoroutine(DoParry());
     }
 
+    /// Called by Projectile.OnTriggerEnter when a successful deflection occur
     public void PlayParrySuccessSfx()
     {
         if (parryAudioSource != null && parrySuccessSfx != null)
@@ -50,7 +55,12 @@ public class PlayerParry : MonoBehaviour
         }
     }
 
-    // Handle parry timing 
+    /** Handle parry timing
+        - 1. Enter cooldown immediately to block re-activation
+        - 2. Play animation and SFX, enable the trigger collider
+        -3. Wait for the parry window duration
+        - 4. Deactivate the trigger, then wait out the remaining cooldown.
+    */
     private IEnumerator DoParry()
     {
         // Set everything active immediately

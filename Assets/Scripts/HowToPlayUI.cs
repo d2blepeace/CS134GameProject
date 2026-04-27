@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+// Toggles the "How To Play" overlay panel with the H key
+//  - Pauses the game and disables camera movement while open
+//  - Won't open if the player is dead or the pause menu is active
 public class HowToPlayUI : MonoBehaviour
 {
     [Header("How to play UI References")]

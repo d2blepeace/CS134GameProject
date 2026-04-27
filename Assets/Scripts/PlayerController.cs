@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
-
-
+/*
+- Handles player movement, jumping, camera-relative input, collectible pickups, and win condition
+- Requires a Rigidbody and PlayerHealth component on the same GameObject.
+- Uses the New Input System callbacks 
+*/
 public class PlayerController : MonoBehaviour
 {
     private CameraController cameraController;
     private Vector2 lookInput;
+    // Pickup tracking
     private int count;
     private int totalPickups;
+    // movements cached
     private float movementX;
     private float movementY;
 
@@ -50,7 +55,7 @@ public class PlayerController : MonoBehaviour
         //Point
         count = 0;
 
-        // Camera control
+        // Cache camera references for camera-relative movement
         if (cameraTransform == null && Camera.main != null)
         {
             cameraTransform = Camera.main.transform;
@@ -60,7 +65,7 @@ public class PlayerController : MonoBehaviour
         // Find playerHealth
         playerHealth = GetComponent<PlayerHealth>();
         
-        // Count the collectible pickup on scene
+        // Count all collectibles in the scene for the win condition
         totalPickups = GameObject.FindGameObjectsWithTag("PickUp").Length;
 
         //Display initial point
@@ -109,30 +114,28 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {     
-        //prevent double jump
+        // Update ground check to prevent double jump
         if (groundCheck != null)
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
         }
         if (cameraTransform == null) return;
 
+        // Flatten camera axes onto the horizontal plane
         Vector3 cameraForward = cameraTransform.forward;
         Vector3 cameraRight = cameraTransform.right;
-
         cameraForward.y = 0f;
         cameraRight.y = 0f;
         cameraForward.Normalize();
         cameraRight.Normalize();
 
+        // Combine input with camera-relative directions
         Vector3 moveDirection = cameraForward * movementY + cameraRight * movementX;
-
-        if (moveDirection.sqrMagnitude > 1f)
-        {
-            moveDirection.Normalize();
-        }
+        if (moveDirection.sqrMagnitude > 1f) moveDirection.Normalize();
 
         rb.AddForce(moveDirection * speed, ForceMode.Force);
 
+        // Smoothly rotate toward movement direction
         if (moveDirection.sqrMagnitude > 0.001f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
@@ -141,6 +144,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    // Trigger-based pickup collection. Pickups must be tagged "PickUp".
     void OnTriggerEnter(Collider other)
     {   
         if (other.gameObject.CompareTag("PickUp")) 
@@ -157,6 +161,8 @@ public class PlayerController : MonoBehaviour
             SetCountText();
         }   
     }
+
+    // Contact damage from enemies on physical collision.
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
@@ -166,6 +172,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Updates the pickup counter UI and triggers the win screen
     void SetCountText()
     {
         int remainingPickups = GameObject.FindGameObjectsWithTag("PickUp").Length;

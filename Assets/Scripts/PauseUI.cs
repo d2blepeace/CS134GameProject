@@ -36,9 +36,11 @@ public class PauseUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // Dont toggle pause if player is dead or How To Play is open
             if (playerHealth != null && playerHealth.isDead) return;
             if (howToPlayUI != null && howToPlayUI.IsOpen) return;
 
+            // If viewing settings panel, Escape goes back to pause menu
             if (isInSettings)
             {
                 BackToPauseMenu();
@@ -49,6 +51,7 @@ public class PauseUI : MonoBehaviour
         }
     }
 
+    // Toggle the pause state: freezes/unfreezes time and shows/hides the panel
     public void TogglePause()
     {
         isPaused = !isPaused;
@@ -81,6 +84,7 @@ public class PauseUI : MonoBehaviour
         }
     }
 
+    // Swaps the pause panel for the settings sub-panel
     public void ResumeGame()
     {
         if (!isPaused) return;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Plays an impact sound effect when the player collides with this object
 public class DynamicBoxAudio : MonoBehaviour
 {
     [Header("SFX")]

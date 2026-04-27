@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// Displays the "You Win" overlay when all pickups are collected
+/// Handles level progression save data and navigation to the next level or back to the main menu
 public class YouWinUI : MonoBehaviour
 {   
     [Header("UI")]
@@ -23,6 +25,9 @@ public class YouWinUI : MonoBehaviour
         if (levelMusic == null) levelMusic = FindObjectOfType<LevelMusic>();
     }
 
+    // Activates the win panel, saves progress, pauses the game,
+    // and shows/hides the "Next Level" button based on the current scene
+    // Called by PlayerController.SetCountText() when all pickups are collected
     public void ShowYouWin()
     {
         if (hasWon) return;
@@ -49,6 +54,8 @@ public class YouWinUI : MonoBehaviour
         if (levelMusic != null)levelMusic.StopMusic();
     }
 
+    // Persists the next level's scene name to PlayerPrefs so the main menu
+    // can offer a "Resume" option. Clears save data after the final level.
     public void SaveProgress()
     {
         string currentScene = SceneManager.GetActiveScene().name;
@@ -71,6 +78,7 @@ public class YouWinUI : MonoBehaviour
 
         PlayerPrefs.Save();
     }
+
     public void LoadNextLevel()
     {
         Time.timeScale = 1f;
@@ -88,6 +96,7 @@ public class YouWinUI : MonoBehaviour
         }
 
     }
+    
     public void ReturnToMainMenu()
     {
         Time.timeScale = 1f;

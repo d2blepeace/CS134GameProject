@@ -1,9 +1,12 @@
-// Projectile must:
-// Fired forward when being fired
-// Can be parried by player, it will reflect back to enemy
-// Damage enemies when reflected
-
 using UnityEngine;
+
+/// Projectile fired by EnemyAI that can be reflected back via the player parry.
+/// 
+///   - "shooter" is immutable, set once on Fire() so the projectile always
+///         ignores its original launcher's collider, even after reflection
+///   - "Owner" stays mutable, retained through reflection so the reflected
+///         projectile can aim-lock toward the enemy's current world position
+///   - "damage" is a float throughout the pipeline to avoid silent casting bugs
 
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour 
@@ -13,7 +16,6 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float speed = 14f;
     [SerializeField] private float lifetime = 5f;
     [SerializeField] private float damage = 1f;
-
     private Rigidbody rb;
     
     // Stored who fired this projectile to skip self-collision on launch
@@ -81,12 +83,17 @@ public class Projectile : MonoBehaviour
             parry.PlayParrySuccessSfx();
         }
     }
-
+   /// Collision-based damage and destruction logic.
+    ///   1. Reflected projectile hits player-> ignored 
+    ///   2. Un-reflected projectile hits its own shooter -> ignored 
+    ///   3. Reflected projectile hits an enemy -> deals damage, destroys self
+    ///   4. failed to parried projectile hits the player -> deals damage to player, destroys self
+    ///   5. Hits anything else (walls, floor) -> destroys self
     private void OnCollisionEnter(Collision collision) 
     {
         if (hasHit) return;
 
-        // Reflected projectile should not damage player
+        // Case 1: Reflected projectile should not damage the player
         if (collision.gameObject.CompareTag("Player") && reflected)
         {
             return;
@@ -94,10 +101,10 @@ public class Projectile : MonoBehaviour
 
         hasHit = true;
         
-        // Let the projectile collide freely to enemy after being parried
+        // Case 2: Skip collision with the original shooter before reflection
         if (collision.transform == shooter && !reflected) return;
 
-        // Reflected projectile hits enemy
+        // Case 3: Reflected projectile damages an enemy
         EnemyAI enemy = collision.gameObject.GetComponent<EnemyAI>();
         if (enemy != null && reflected)
         {
@@ -106,7 +113,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // Projectile hits player before parried
+        // Case 4: failed to parried projectile hits the player
         if (collision.gameObject.CompareTag("Player") && !reflected)
         {
             PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
@@ -117,7 +124,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // Destroy on hitting other object
+        // Case 5: Hit environment or other objects
         Destroy(gameObject);
     }
 }

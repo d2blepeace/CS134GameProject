@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-
+/**
+- Manages the player's health pool, damage intake, death sequence, and health UI
+- Attach to the same GameObject as PlayerController and PlayerParry
+- On death: disables player input, stops all enemies, shows Game Over UI
+*/
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Setting")]
@@ -35,6 +39,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead) return;
 
+        // Kill the player if they fall below the death threshold
         if (transform.position.y < fallDeathY)
         {
             Die();
@@ -52,7 +57,6 @@ public class PlayerHealth : MonoBehaviour
         currHealth -= dmg;
         currHealth = Mathf.Clamp(currHealth, 0, maxHealth);
         Debug.Log($"currHealth after={currHealth}");
-
 
         //Update ui based on health
         UpdateHealthUI();
@@ -75,23 +79,21 @@ public class PlayerHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        // play deathsound at current camera position (player's position)
-        if (deathSound != null && deathAudioSource != null)
-        {
+        // play deathsound and stop music
+        if (deathSound != null && deathAudioSource != null) 
             deathAudioSource.PlayOneShot(deathSound);
-        }
+        if (levelMusic != null) levelMusic.StopMusic();
+
         // disable movement and parry 
         PlayerController controller = GetComponent<PlayerController>();
         if (controller != null) controller.enabled = false;
         PlayerParry parry = GetComponent<PlayerParry>();
-
         if (parry != null) parry.enabled = false;
         Rigidbody rb = GetComponent<Rigidbody>();
 
         //disable camera movement
         CameraController cam = Camera.main != null ? Camera.main.GetComponent<CameraController>() : null;
         cam.enabled = false;
-
         if (rb != null) rb.velocity = Vector3.zero;       
 
         // Stop all enemies movement and attack
@@ -100,11 +102,9 @@ public class PlayerHealth : MonoBehaviour
         {
             enemy.StopEnemy();
         }
-        //Stop Level Music
-        if (levelMusic != null) levelMusic.StopMusic();
+        
         // Show gameOver UI
-        if (gameOverUI != null)
-            gameOverUI.ShowGameOver();
+        if (gameOverUI != null) gameOverUI.ShowGameOver();
     }
 
     //Update UI of health based on currHealth (need refine this)

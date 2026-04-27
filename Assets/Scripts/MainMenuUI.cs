@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/**
+Main menu controller handling New Game, Resume, Settings, Tutorial, and Quit
+    - Resume functionality uses PlayerPrefs ("HasResume" + "ResumeScene") to track
+        the furthest level unlocked. The Resume button is hidden if no save exists
+*/
 public class MainMenuUI : MonoBehaviour
 {
     [Header("Scene Name")]
@@ -21,6 +26,7 @@ public class MainMenuUI : MonoBehaviour
         bool hasResume = PlayerPrefs.GetInt("HasResume", 0) == 1;
         string resumeScene = PlayerPrefs.GetString("ResumeScene", "");
 
+        // Show the Resume button only if saved progress exists
         if (resumeButton != null)
             resumeButton.SetActive(hasResume && !string.IsNullOrEmpty(resumeScene));
     }
@@ -38,6 +44,7 @@ public class MainMenuUI : MonoBehaviour
         SceneManager.LoadScene(firstLevelSceneName);
     }
     
+    // Wipe saved progress without starting a new game
     public void ClearSave()
     {
         PlayerPrefs.DeleteKey("HasResume");
@@ -60,6 +67,7 @@ public class MainMenuUI : MonoBehaviour
             SceneManager.LoadScene(firstLevelSceneName);
         }
     }
+    // Saves a scene name as the resume point (called by YouWinUI.SaveProgress)
     public void SaveResumeScene(string sceneName)
     {
         PlayerPrefs.SetString("ResumeScene", sceneName);

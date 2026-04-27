@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
+// In-game audio settings panel controlling the level's background music
+// Provides both a volume slider and a mute toggle
+// When the toggle is off, volume is set to 0 regardless of the slider position
 public class GameAudioSetting : MonoBehaviour
 {
     [Header("Audio Sources")]
@@ -36,7 +39,9 @@ public class GameAudioSetting : MonoBehaviour
     {
         ApplyMusicVolume();
     }
-
+    
+    // Sets the AudioSource volume to the slider value when the toggle is on,
+    //or zero when muted.
     private void ApplyMusicVolume()
     {
         if (levelMusicSource == null || musicToggle == null) return;

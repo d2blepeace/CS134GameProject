@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// Simple wrapper that starts level background music on scene load
+//  and exposes a StopMusic() method for death / win / pause events
 public class LevelMusic : MonoBehaviour
 {
     [Header("Music")]

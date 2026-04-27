@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-// Enemy AI will patroling an area, if player is near, attack
+/**
+State-driven enemy AI using NavMeshAgent.
+Behaviour priority (evaluated every Update):
+    - Player in sight AND attack range: stop moving, face player, fire projectiles
+    - Player in sight but NOT in attack range: chase via NavMesh
+    - Player not in sight: patrol to random NavMesh-validated point
+*/
 public class EnemyAI : MonoBehaviour
 {
     private bool playerIsDead = false;  //to prevent shoot at player when they died
     [Header("References")]
     public NavMeshAgent agent;
     public Transform player;
+
 
     [Header("Layers")]
     public LayerMask indicateGround, indicatePlayer;
@@ -61,6 +68,7 @@ public class EnemyAI : MonoBehaviour
     private void Update()
     {
         if (playerIsDead || player == null) return;
+
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, indicatePlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, indicatePlayer);
@@ -92,15 +100,21 @@ public class EnemyAI : MonoBehaviour
         if (patrolPointSet)
             agent.SetDestination(patrolPoint);
 
+        // Check if close enough to the patrol point to pick a new one
         Vector3 distanceToPatrolPoint = transform.position - patrolPoint;
 
         if (distanceToPatrolPoint.magnitude < 1f)
             patrolPointSet = false;
 
-        // If the agent has stopped moving but hasn't reached the point, pick a new one
-        if (patrolPointSet && !agent.pathPending && agent.remainingDistance < 0.5f)
+        // Stuck detection, agent finished its path but didn't reach the point, abandon and retry
+        if (patrolPointSet && !agent.pathPending && agent.remainingDistance < 1f)
             patrolPointSet = false;
     }
+
+    /**
+    Generates a random point within patrolPointRange, then validates it
+    Prevents enemies from patrolling into walls or off the NavMesh
+    */
     void SearchPatrolPoint()
     {
         float z = Random.Range(-patrolPointRange, patrolPointRange);
@@ -144,7 +158,6 @@ public class EnemyAI : MonoBehaviour
         //Play vfx smoke 
         shootVFX.Play();      
         
-
         // Spawn position
         Vector3 spawnPos = (shootPoint != null) ? shootPoint.position : (transform.position + Vector3.up * 1f);
 

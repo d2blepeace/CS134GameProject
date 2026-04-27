@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// Controls the Game Over overlay panel
+///     - Pauses the game and shows the cursor when displayed
+///     - Provides Retry (reload current scene) and Main Menu buttons
 public class GameOverUI : MonoBehaviour
 {   
     [Header("UI Root")]
@@ -14,6 +17,7 @@ public class GameOverUI : MonoBehaviour
         gameOverPanel.SetActive(false);
     }
 
+    // Activates the Game Over panel, pauses the game, and unlocks the cursor.
     public void ShowGameOver()
     {
         gameOverPanel.SetActive(true);

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-
+// Adds hover and click sound effects to any UI Button.
 public class UIButtonSFX : MonoBehaviour, IPointerEnterHandler
 {
     [Header("SFX")]
