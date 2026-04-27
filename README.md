@@ -57,7 +57,7 @@ Three levels with save/resume support:
 
 1. **Level_1** - unlocks Level_2 on completion
 2. **Level_2** - unlocks Final_level on completion
-3. **Final_level** - clears save data on completion
+3. **Level_3** - clears save data on completion
 
 Progress is persisted via `PlayerPrefs` so players can resume from the main menu.
 
@@ -77,7 +77,10 @@ Assets/Scripts/
 ├── HowToPlayUI.cs         # Controls overlay
 ├── GameOverUI.cs          # Death screen
 ├── YouWinUI.cs            # Win screen and level progression
-├── MainMenuMusic.cs       # Volume sliders for music/SFX
+├── LevelMusic.cs          # Level background music playback
+├── MainMenuMusic.cs       # Main menu volume slider
+├── GameAudioSetting.cs    # In-game music volume and mute toggle
+├── DynamicBoxAudio.cs     # Impact SFX on player-box collisions
 ├── UIButtonSFX.cs         # Hover/click sounds on buttons
 └── sceneLoader.cs         # Generic scene loading utility
 ```
@@ -85,8 +88,21 @@ Assets/Scripts/
 ## Technical Details
 
 - **Engine:** Unity (C#)
+- **Editor:** Unity 2022.3.62f3
 - **Input:** Unity Input System
 - **Navigation:** Unity NavMesh
 - **UI:** TextMeshPro + Unity UI 
 - **Audio:** Per-component AudioSource/AudioClip pairs for granular control
 - **Architecture:** Component-based with clear separation of concerns - dedicated health components, split identity/ownership fields on projectiles, and serialized fields for designer-friendly tuning.
+
+## Known issues & Future Plans
+- Add more varieties of enemies with different attack pattern and movement
+- More health pickup and collectibles
+- Enemies sometimes get stuck with wall, need improving.
+- More visual GUI: health bar, experience bar
+- More levels
+
+## Credits
+
+- Music & SFX: free assets from freesound.org and pixabay.com
+- Textures: free assets from cc0-textures.com
